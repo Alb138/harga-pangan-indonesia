@@ -27,13 +27,20 @@ def build_warehouse(raw_dir: Path, ref_dir: Path, db_path: Path) -> None:
 
     commodities = json.loads((raw_dir / "ref_commodities.json").read_text(encoding="utf-8"))
     with duckdb.connect(str(db_path)) as con:
-        con.execute(read_sql("schema.sql"))
-        _load_dim_date(con, ref_dir)
-        _load_dim_province(con, ref_dir)
-        _load_dim_commodity(con, commodities)
+        create_dimensions(con, ref_dir, commodities)
         _load_facts(con, raw_dir, commodity_lookup_from_ref(commodities))
         _load_optional_refs(con, ref_dir)
         con.execute(read_sql("views.sql"))
+
+
+def create_dimensions(
+    con: duckdb.DuckDBPyConnection, ref_dir: Path, commodities: list[dict]
+) -> None:
+    """Create every table and fill the dimensions; facts and refs are loaded separately."""
+    con.execute(read_sql("schema.sql"))
+    _load_dim_date(con, ref_dir)
+    _load_dim_province(con, ref_dir)
+    _load_dim_commodity(con, commodities)
 
 
 def _load_dim_date(con: duckdb.DuckDBPyConnection, ref_dir: Path) -> None:
