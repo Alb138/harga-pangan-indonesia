@@ -72,10 +72,24 @@ class PihpsClient:
                 if attempt == self.max_retries:
                     raise
             else:
-                if response.status_code < 400:
-                    return response.json()
-                error = requests.HTTPError(f"{response.status_code} from {url}")
-                if response.status_code < 500 or attempt == self.max_retries:
-                    raise error
+                if response.status_code >= 400:
+                    error = requests.HTTPError(f"{response.status_code} from {url}")
+                    if response.status_code < 500 or attempt == self.max_retries:
+                        raise error
+                else:
+                    payload = _data_payload(response)
+                    if payload is not None:
+                        return payload
+                    if attempt == self.max_retries:
+                        raise ValueError(f"no usable JSON from {url} after {attempt + 1} tries")
             self.sleep(5 * 2**attempt)
         raise AssertionError("unreachable")
+
+
+def _data_payload(response: requests.Response) -> dict | None:
+    """The server sometimes answers 200 with an empty or non-JSON body; treat that as transient."""
+    try:
+        payload = response.json()
+    except requests.JSONDecodeError:
+        return None
+    return payload if isinstance(payload, dict) and "data" in payload else None

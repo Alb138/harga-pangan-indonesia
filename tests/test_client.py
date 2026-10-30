@@ -7,13 +7,17 @@ import requests
 
 from pangan.pihps_client import PihpsClient
 
+NOT_JSON = object()  # stands for an empty or HTML body served with status 200
+
 
 class FakeResponse:
-    def __init__(self, status_code: int, payload: dict | None = None):
+    def __init__(self, status_code: int, payload: object = None):
         self.status_code = status_code
-        self._payload = payload or {}
+        self._payload = {} if payload is None else payload
 
-    def json(self) -> dict:
+    def json(self) -> object:
+        if self._payload is NOT_JSON:
+            raise requests.JSONDecodeError("Expecting value", "", 0)
         return self._payload
 
 
@@ -65,3 +69,25 @@ def test_national_sends_empty_province():
     assert params["start_date"] == "2024-03-01"
     assert params["end_date"] == "2024-03-08"
     assert session.calls[0]["url"].endswith("/GetGridDataDaerah")
+
+
+def test_retries_when_200_body_is_not_json():
+    ok = {"data": []}
+    session = FakeSession([FakeResponse(200, NOT_JSON), FakeResponse(200, ok)])
+    assert make_client(session).get_price_grid(1, 10, date(2020, 1, 1), date(2020, 12, 31)) == ok
+    assert len(session.calls) == 2
+
+
+def test_retries_when_json_has_no_data_key():
+    ok = {"data": []}
+    session = FakeSession([FakeResponse(200, {"message": "error"}), FakeResponse(200, ok)])
+    assert make_client(session).get_price_grid(1, 10, date(2020, 1, 1), date(2020, 12, 31)) == ok
+    assert len(session.calls) == 2
+
+
+def test_gives_up_on_persistent_bad_body():
+    session = FakeSession([FakeResponse(200, NOT_JSON)])
+    client = make_client(session)
+    with pytest.raises(ValueError):
+        client.get_provinces()
+    assert len(session.calls) == client.max_retries + 1
