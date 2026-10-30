@@ -1,0 +1,47 @@
+{
+ "var": [
+  {
+   "val": 220,
+   "label": "Upah Minimum Regional/Propinsi",
+   "unit": "Rupiah"
+  }
+ ],
+ "turvar": [
+  {
+   "val": "0",
+   "label": "Tidak ada"
+  }
+ ],
+ "labelvervar": "38 Provinsi",
+ "vervar": [
+  {
+   "val": 1100,
+   "label": "ACEH"
+  },
+  {
+   "val": 3100,
+   "label": "DKI JAKARTA"
+  },
+  {
+   "val": 9400,
+   "label": "PAPUA"
+  }
+ ],
+ "tahun": [
+  {
+   "val": 120,
+   "label": "2020"
+  }
+ ],
+ "turtahun": [
+  {
+   "val": 0,
+   "label": "Tahun"
+  }
+ ],
+ "datacontent": {
+  "110022001200": 3165031,
+  "310022001200": 4276350,
+  "940022001200": 3516700
+ }
+}

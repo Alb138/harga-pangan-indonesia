@@ -1,0 +1,57 @@
+{
+ "var": [
+  {
+   "val": 2824,
+   "label": "Upah Minimum Provinsi (UMP) per Bulan Menurut Provinsi di Indonesia",
+   "unit": "rupiah"
+  }
+ ],
+ "turvar": [
+  {
+   "val": "0",
+   "label": "Tidak ada"
+  }
+ ],
+ "labelvervar": "Provinsi di Indonesia",
+ "vervar": [
+  {
+   "val": 1,
+   "label": "11 Aceh "
+  },
+  {
+   "val": 11,
+   "label": "31 DKI Jakarta "
+  },
+  {
+   "val": 34,
+   "label": "92 Papua Barat Daya "
+  },
+  {
+   "val": 35,
+   "label": "94 Papua"
+  },
+  {
+   "val": 38,
+   "label": "97 Papua Pegunungan "
+  }
+ ],
+ "tahun": [
+  {
+   "val": 126,
+   "label": "2026"
+  }
+ ],
+ "turtahun": [
+  {
+   "val": 0,
+   "label": "Tahun"
+  }
+ ],
+ "datacontent": {
+  "1282401260": 3932552,
+  "11282401260": 5729876,
+  "34282401260": 3766000,
+  "35282401260": 4436283,
+  "38282401260": 4508714
+ }
+}
