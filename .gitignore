@@ -1,0 +1,20 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Data & warehouse (regenerate with `uv run pangan all`)
+data/raw/
+warehouse/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Plan-execution scratch
+.superpowers/
