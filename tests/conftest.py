@@ -28,7 +28,8 @@ def grid(rows: dict[str, list[str]]) -> dict:
     """Build a PIHPS-shaped payload: {commodity name: [price per MARCH_DAYS]}."""
     data = [{"no": "I", "name": "Beras", "level": 1, **dict.fromkeys(MARCH_DAYS, "1")}]
     for i, (name, prices) in enumerate(rows.items(), start=1):
-        data.append({"no": i, "name": name, "level": 2, **dict(zip(MARCH_DAYS, prices, strict=True))})
+        prices_by_day = dict(zip(MARCH_DAYS, prices, strict=True))
+        data.append({"no": i, "name": name, "level": 2, **prices_by_day})
     return {"data": data}
 
 
