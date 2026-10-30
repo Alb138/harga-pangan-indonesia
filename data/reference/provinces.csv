@@ -1,0 +1,35 @@
+pihps_id,province_name,bps_code,island_group,tz_region,capital,lat,lon,valid_from_year
+1,Aceh,11,Sumatera,Barat,Banda Aceh,5.55,95.32,2018
+2,Sumatera Utara,12,Sumatera,Barat,Medan,3.59,98.67,2018
+3,Sumatera Barat,13,Sumatera,Barat,Padang,-0.95,100.35,2018
+4,Riau,14,Sumatera,Barat,Pekanbaru,0.51,101.45,2018
+6,Jambi,15,Sumatera,Barat,Jambi,-1.61,103.61,2018
+8,Sumatera Selatan,16,Sumatera,Barat,Palembang,-2.98,104.76,2018
+7,Bengkulu,17,Sumatera,Barat,Bengkulu,-3.80,102.27,2018
+10,Lampung,18,Sumatera,Barat,Bandar Lampung,-5.43,105.26,2018
+9,Kepulauan Bangka Belitung,19,Sumatera,Barat,Pangkalpinang,-2.13,106.11,2018
+5,Kepulauan Riau,21,Sumatera,Barat,Tanjungpinang,0.92,104.45,2018
+13,DKI Jakarta,31,Jawa,Barat,Jakarta,-6.20,106.85,2018
+12,Jawa Barat,32,Jawa,Barat,Bandung,-6.92,107.62,2018
+14,Jawa Tengah,33,Jawa,Barat,Semarang,-6.97,110.42,2018
+15,DI Yogyakarta,34,Jawa,Barat,Yogyakarta,-7.80,110.37,2018
+16,Jawa Timur,35,Jawa,Barat,Surabaya,-7.25,112.75,2018
+11,Banten,36,Jawa,Barat,Serang,-6.12,106.15,2018
+17,Bali,51,Bali-Nusa Tenggara,Tengah,Denpasar,-8.65,115.22,2018
+18,Nusa Tenggara Barat,52,Bali-Nusa Tenggara,Tengah,Mataram,-8.58,116.12,2018
+19,Nusa Tenggara Timur,53,Bali-Nusa Tenggara,Tengah,Kupang,-10.18,123.61,2018
+20,Kalimantan Barat,61,Kalimantan,Barat,Pontianak,-0.03,109.33,2018
+22,Kalimantan Tengah,62,Kalimantan,Barat,Palangka Raya,-2.21,113.92,2018
+21,Kalimantan Selatan,63,Kalimantan,Tengah,Banjarbaru,-3.44,114.83,2018
+23,Kalimantan Timur,64,Kalimantan,Tengah,Samarinda,-0.50,117.15,2018
+24,Kalimantan Utara,65,Kalimantan,Tengah,Tanjung Selor,2.84,117.37,2018
+29,Sulawesi Utara,71,Sulawesi,Tengah,Manado,1.47,124.84,2018
+28,Sulawesi Tengah,72,Sulawesi,Tengah,Palu,-0.90,119.87,2018
+26,Sulawesi Selatan,73,Sulawesi,Tengah,Makassar,-5.15,119.43,2018
+27,Sulawesi Tenggara,74,Sulawesi,Tengah,Kendari,-3.97,122.51,2018
+25,Gorontalo,75,Sulawesi,Tengah,Gorontalo,0.54,123.06,2018
+30,Sulawesi Barat,76,Sulawesi,Tengah,Mamuju,-2.68,118.89,2018
+31,Maluku,81,Maluku-Papua,Timur,Ambon,-3.70,128.18,2018
+32,Maluku Utara,82,Maluku-Papua,Timur,Sofifi,0.74,127.56,2018
+34,Papua Barat,91,Maluku-Papua,Timur,Manokwari,-0.86,134.06,2018
+33,Papua,94,Maluku-Papua,Timur,Jayapura,-2.53,140.72,2018
