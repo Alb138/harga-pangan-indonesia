@@ -1,2 +1,1 @@
-def main() -> None:
-    print("Hello from pangan!")
+"""Harga Pangan Indonesia: PIHPS food-price pipeline and analysis."""
