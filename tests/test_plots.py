@@ -75,3 +75,23 @@ def test_save_fig_writes_png(tmp_path, monkeypatch):
     path = plots.save_fig(plots.plot_volatility(VOLATILITY), "volatility")
     assert path == tmp_path / "volatility.png"
     assert path.stat().st_size > 0
+
+
+def test_lebaran_median_line_is_continuous():
+    """Years report on different weekdays; the median line must not break or zig-zag on gaps."""
+    gappy = pd.DataFrame(
+        {
+            "commodity_id": ["com_1"] * 8,
+            "commodity_name": ["Beras"] * 8,
+            "lebaran_year": [2023] * 4 + [2024] * 4,
+            "t": [-10, -8, -6, -4, -9, -7, -5, -3],
+            "price_index": [1.0, 1.1, 1.2, 1.3, 1.0, 1.1, 1.2, 1.3],
+        }
+    )
+    fig = plots.plot_lebaran_index(gappy, "com_1")
+    median_line = next(line for line in fig.axes[0].lines if line.get_color() == plots.SERIES[0])
+    assert list(median_line.get_xdata()) == list(range(-10, -2))
+    # each year is interpolated across its own gaps before the median is taken, so the
+    # two identical-but-shifted seasons give a smooth ramp instead of a staircase
+    expected = [1.0, 1.025, 1.075, 1.125, 1.175, 1.225, 1.275, 1.3]
+    assert list(median_line.get_ydata()) == pytest.approx(expected)

@@ -79,7 +79,11 @@ def plot_lebaran_index(df: pd.DataFrame, commodity_id: str) -> Figure:
     fig, ax = _figure()
     for _, season in data.groupby("lebaran_year"):
         ax.plot(season["t"], season["price_index"], color=AXIS, linewidth=1)
-    median = data.groupby("t")["price_index"].median()
+    # Each year misses different days (weekends, holidays); fill each year's own gaps first,
+    # otherwise the median jumps whenever the set of years present changes.
+    by_year = data.pivot_table(index="t", columns="lebaran_year", values="price_index")
+    by_year = by_year.reindex(range(int(by_year.index.min()), int(by_year.index.max()) + 1))
+    median = by_year.interpolate(limit_area="inside").median(axis=1)
     ax.plot(median.index, median.values, color=SERIES[0], linewidth=2)
     ax.axhline(1.0, color=AXIS, linewidth=1)
     ax.axvline(0, color=MUTED, linewidth=1)
