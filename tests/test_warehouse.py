@@ -123,3 +123,35 @@ def test_no_cache_files_raises_clear_error(raw_dir, ref_dir, tmp_path):
         path.unlink()
     with pytest.raises(FileNotFoundError, match="pangan extract"):
         build_warehouse(raw_dir, ref_dir, tmp_path / "empty.duckdb")
+
+
+def test_outlier_run_covering_most_of_a_month(ref_dir, tmp_path):
+    """A typo repeated for weeks must not become the 'normal' price (seen in PIHPS 2021 data)."""
+    from datetime import date
+
+    import pandas as pd
+
+    from tests.conftest import REF_COMMODITIES, write_json
+
+    bad = (date(2024, 3, 4), date(2024, 3, 29))
+    days = pd.bdate_range("2024-01-02", "2024-04-30")
+    prices = {
+        d.strftime("%d/%m/%Y"): "150,000" if bad[0] <= d.date() <= bad[1] else "15,000"
+        for d in days
+    }
+    raw = tmp_path / "raw_run"
+    write_json(raw / "ref_commodities.json", REF_COMMODITIES)
+    write_json(
+        raw / "pt4" / "provnational" / "2024.json",
+        {"data": [{"no": 1, "name": "Beras Kualitas Bawah I", "level": 2, **prices}]},
+    )
+    db_path = tmp_path / "run.duckdb"
+    build_warehouse(raw, ref_dir, db_path)
+
+    with duckdb.connect(str(db_path), read_only=True) as con:
+        flagged = con.execute(
+            "SELECT DISTINCT price_idr FROM fact_price_daily WHERE is_outlier"
+        ).fetchall()
+        n_flagged = scalar(con, "SELECT COUNT(*) FROM fact_price_daily WHERE is_outlier")
+    assert flagged == [(150000,)]
+    assert n_flagged == sum(bad[0] <= d.date() <= bad[1] for d in days)

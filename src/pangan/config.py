@@ -20,6 +20,7 @@ USER_AGENT = "Mozilla/5.0 (compatible; harga-pangan-indonesia/0.1; educational p
 # --- Analysis assumptions (explained in docs/PENJELASAN.md) ----------------
 HOUSEHOLD_SIZE = 4
 OUTLIER_RATIO = 3.0
+OUTLIER_WINDOW_DAYS = 60
 LEBARAN_WINDOW = (-90, 45)
 
 # --- Paths -------------------------------------------------------------------

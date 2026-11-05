@@ -7,7 +7,14 @@ from pathlib import Path
 import duckdb
 import pandas as pd
 
-from pangan.config import END_DATE, LEBARAN_WINDOW, OUTLIER_RATIO, SQL_DIR, START_DATE
+from pangan.config import (
+    END_DATE,
+    LEBARAN_WINDOW,
+    OUTLIER_RATIO,
+    OUTLIER_WINDOW_DAYS,
+    SQL_DIR,
+    START_DATE,
+)
 from pangan.transform import commodity_lookup_from_ref, grid_to_long
 
 log = logging.getLogger(__name__)
@@ -112,7 +119,8 @@ def _load_facts(con: duckdb.DuckDBPyConnection, raw_dir: Path, lookup: dict[str,
     stg_price = pd.concat(frames, ignore_index=True)
     log.info("loading %d price rows from %d cache files", len(stg_price), len(frames))
     con.register("stg_price", stg_price)
-    con.execute(read_sql("load_fact.sql"), {"ratio": OUTLIER_RATIO})
+    params = {"ratio": OUTLIER_RATIO, "window_days": OUTLIER_WINDOW_DAYS}
+    con.execute(read_sql("load_fact.sql"), params)
     con.unregister("stg_price")
 
 
