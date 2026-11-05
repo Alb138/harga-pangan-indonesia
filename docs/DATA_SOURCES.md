@@ -54,3 +54,23 @@ Government (Kemenag sidang isbat / SKB) dates. Where Muhammadiyah differed (2023
 The BPS website only renders the latest year of a dynamic table server-side (other years are
 loaded through internal server actions), and the static table failed to render server-side, so
 these tables are pulled through the official [BPS WebAPI](https://webapi.bps.go.id/) (free key).
+
+## 5. Data quality (full build, 2026-11-05)
+
+Command: `uv run pangan build && uv run pangan quality`
+
+| Check | Result |
+|---|---|
+| Cache files | 342 (34 provinces × 9 years traditional market + 4 market types × 9 years national) |
+| Price rows (`fact_price_daily`) | **1,713,633** — 2018-01-01 to 2026-09-30, 34 provinces + national, 21 commodities |
+| Rows by market type | Pasar Tradisional 1,572,015 · Pasar Modern 47,827 · Pedagang Besar 47,838 · Produsen 45,953 (national producer series starts 2018-03-26) |
+| Duplicate keys / null prices | 0 / 0 |
+| Business-day coverage per province-year | min 92.0%, median 95.4% (missing days are public holidays) — no province-year below 80% |
+| Outliers flagged (excluded from analysis) | **33** — 22 of them one typo: national producer price of *Daging Sapi Kualitas 2* recorded as ~Rp583,000 instead of ~Rp108,000 on 22 business days (2021-09-20 → 2021-10-19); the rest are single-day typos, mostly Papua Barat 2019–2021 |
+| Thin days (excluded from national series) | 77 weekdays where fewer than half of the provinces reported (holiday periods such as Lebaran 2022, when only 1–2 provinces reported and the "national" price jumped 20–50% for a day) |
+
+Two cleaning rules were changed after inspecting the real data (see `git log`):
+
+1. Outliers are judged against a **±60-day rolling median**, not the calendar-month median —
+   the beef typo above lasted long enough to *become* October 2021's median.
+2. **Thin days** are removed from the national series; province series keep them.
