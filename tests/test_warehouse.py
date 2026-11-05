@@ -155,3 +155,33 @@ def test_outlier_run_covering_most_of_a_month(ref_dir, tmp_path):
         n_flagged = scalar(con, "SELECT COUNT(*) FROM fact_price_daily WHERE is_outlier")
     assert flagged == [(150000,)]
     assert n_flagged == sum(bad[0] <= d.date() <= bad[1] for d in days)
+
+
+def test_thin_days_excluded_from_national_series(ref_dir, tmp_path):
+    """On holidays only 1-2 provinces report; the 'national' price is then not national."""
+    from tests.conftest import REF_COMMODITIES, write_json
+
+    def series(days: list[str], price: str) -> dict:
+        row = {"no": 1, "name": "Beras Kualitas Bawah I", "level": 2, **dict.fromkeys(days, price)}
+        return {"data": [row]}
+
+    normal = ["01/03/2024", "04/03/2024", "05/03/2024"]
+    holiday = "06/03/2024"  # national row exists, but no province reported
+    raw = tmp_path / "raw_thin"
+    write_json(raw / "ref_commodities.json", REF_COMMODITIES)
+    write_json(raw / "pt1" / "prov13" / "2024.json", series(normal, "15,000"))
+    write_json(raw / "pt1" / "provnational" / "2024.json", series([*normal, holiday], "15,000"))
+    db_path = tmp_path / "thin.duckdb"
+    build_warehouse(raw, ref_dir, db_path)
+
+    with duckdb.connect(str(db_path), read_only=True) as con:
+        thin = con.execute(
+            "SELECT reporting_provinces, is_thin_day FROM dim_date WHERE date_key = '2024-03-06'"
+        ).fetchone()
+        normal_day = con.execute(
+            "SELECT reporting_provinces, is_thin_day FROM dim_date WHERE date_key = '2024-03-04'"
+        ).fetchone()
+        national_days = scalar(con, "SELECT COUNT(DISTINCT date_key) FROM v_price_national")
+    assert thin == (0, True)
+    assert normal_day == (1, False)  # 1 of 2 provinces = half, not thin
+    assert national_days == 3

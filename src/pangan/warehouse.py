@@ -10,6 +10,7 @@ import pandas as pd
 from pangan.config import (
     END_DATE,
     LEBARAN_WINDOW,
+    MIN_REPORTING_SHARE,
     OUTLIER_RATIO,
     OUTLIER_WINDOW_DAYS,
     SQL_DIR,
@@ -36,6 +37,7 @@ def build_warehouse(raw_dir: Path, ref_dir: Path, db_path: Path) -> None:
     with duckdb.connect(str(db_path)) as con:
         create_dimensions(con, ref_dir, commodities)
         _load_facts(con, raw_dir, commodity_lookup_from_ref(commodities))
+        con.execute(read_sql("flag_thin_days.sql"), {"min_share": MIN_REPORTING_SHARE})
         _load_optional_refs(con, ref_dir)
         con.execute(read_sql("views.sql"))
 

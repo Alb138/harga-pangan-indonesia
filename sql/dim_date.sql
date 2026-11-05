@@ -1,6 +1,9 @@
 -- One row per calendar day, tagged with its distance to the nearest Idul Fitri.
 -- Parameters: $start, $end (DATE), $win_lo, $win_hi (Lebaran window in days).
-INSERT INTO dim_date
+INSERT INTO dim_date (
+    date_key, year, month, iso_week, dow,
+    idul_fitri, lebaran_year, days_to_lebaran, is_ramadan
+)
 WITH days AS (
     SELECT CAST(d AS DATE) AS date_key
     FROM range(CAST($start AS DATE), CAST($end AS DATE) + INTERVAL 1 DAY, INTERVAL 1 DAY) t(d)

@@ -10,7 +10,9 @@ CREATE TABLE dim_date (
     idul_fitri      DATE,                -- nearest Idul Fitri, only inside the Lebaran window
     lebaran_year    SMALLINT,
     days_to_lebaran INTEGER,             -- negative = before Lebaran (H-7 = -7)
-    is_ramadan      BOOLEAN NOT NULL
+    is_ramadan      BOOLEAN NOT NULL,
+    reporting_provinces INTEGER,         -- provinces with a traditional-market price that day
+    is_thin_day     BOOLEAN NOT NULL DEFAULT FALSE  -- too few provinces for a national figure
 );
 
 CREATE TABLE dim_province (

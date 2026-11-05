@@ -24,5 +24,9 @@ WHERE NOT f.is_outlier;
 CREATE OR REPLACE VIEW v_price_province AS
 SELECT * FROM v_price WHERE NOT is_national;
 
+-- National series without holiday days on which only a handful of provinces reported.
 CREATE OR REPLACE VIEW v_price_national AS
-SELECT * FROM v_price WHERE is_national;
+SELECT v.*
+FROM v_price AS v
+JOIN dim_date AS d USING (date_key)
+WHERE v.is_national AND NOT d.is_thin_day;
