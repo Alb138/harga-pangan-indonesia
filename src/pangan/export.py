@@ -27,6 +27,7 @@ def export_tableau(con: duckdb.DuckDBPyConnection, out_dir: Path = EXPORT_DIR) -
     for filename in EXPORT_FILES:
         query = (EXPORT_SQL_DIR / filename.replace(".csv", ".sql")).read_text(encoding="utf-8")
         path = out_dir / filename
-        con.execute(f"COPY ({query.strip().rstrip(';')}) TO '{path.as_posix()}' (HEADER)")
+        target = path.as_posix().replace("'", "''")  # SQL string literal: double any quote
+        con.execute(f"COPY ({query.strip().rstrip(';')}) TO '{target}' (HEADER)")
         written.append(path)
     return written

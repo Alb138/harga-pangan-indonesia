@@ -44,3 +44,13 @@ def test_weekly_province_prices(exported):
     weekly = exported["price_weekly_province.csv"]
     assert {"week", "avg_price_idr", "tz_region"} <= set(weekly.columns)
     assert (weekly["province_name"] != "Indonesia (Nasional)").all()
+
+
+def test_export_to_path_with_apostrophe(tmp_path):
+    """Folder names like C:/Users/D'Souza must not break the COPY statement."""
+    out_dir = tmp_path / "D'Souza" / "tableau"
+    con = build_synthetic_warehouse()
+    build_marts(con)
+    paths = export_tableau(con, out_dir)
+    con.close()
+    assert all(p.exists() for p in paths)

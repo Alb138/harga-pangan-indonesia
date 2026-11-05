@@ -89,7 +89,7 @@ Requires [uv](https://docs.astral.sh/uv/) (Python 3.13 is installed automaticall
 uv sync
 uv run pangan all        # extract → build → marts → export
 uv run pangan quality    # data-quality report
-uv run pytest            # 74 tests
+uv run pytest            # 76 tests
 ```
 
 The first `extract` downloads 342 yearly files (~2.5–4 h, the server is slow); it caches every

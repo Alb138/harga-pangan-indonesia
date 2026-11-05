@@ -156,7 +156,7 @@ keranjang yang tidak lengkap akan terlihat murah palsu. *Status: menunggu data B
 
 ### 2.7 Test
 
-74 test (`uv run pytest`) memakai data sintetis kecil dengan angka yang bisa dihitung manual —
+76 test (`uv run pytest`) memakai data sintetis kecil dengan angka yang bisa dihitung manual —
 misalnya harga produsen 10.000 → pedagang besar 12.000 harus menghasilkan markup tepat 20%.
 Setiap bug yang ditemukan dari data nyata **pertama dibuat test-nya yang gagal**, baru diperbaiki.
 
@@ -243,7 +243,7 @@ Beli cabai, bawang, dan ayam dari pedagang besar, bukan pasar modern: tahap peda
 menambah 16–29%, dan pasar modern 42–72% lebih mahal dari pasar tradisional untuk cabai dan bawang.
 
 **13. Bagaimana kamu memastikan analisisnya benar?**
-(1) 74 test dengan angka yang dihitung manual, (2) cek kualitas data (duplikat, null, outlier,
+(1) 76 test dengan angka yang dihitung manual, (2) cek kualitas data (duplikat, null, outlier,
 coverage), (3) mencocokkan hasil dengan peristiwa nyata — krisis minyak goreng Maret 2022 dan
 lonjakan beras Februari 2024 muncul di data, (4) setiap angka di README bisa dilacak ke query-nya.
 
