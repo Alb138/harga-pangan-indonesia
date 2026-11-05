@@ -142,3 +142,26 @@ def test_q5_excludes_incomplete(con):
     kept = rows(con, "SELECT province_id, month FROM mart_q5_affordability ORDER BY ALL")
     # April DKI lacks chilli; Sulsel has no UMP row; Papua lacks chilli.
     assert kept == [(DKI, date(2024, 3, 1))]
+
+
+def test_q1_peak_tie_resolves_to_earliest_week():
+    """Equal (or float-noise-equal) weeks must give the same answer on every run."""
+    import duckdb
+
+    from pangan.config import REF_DIR
+    from pangan.warehouse import create_dimensions, read_sql
+    from tests.helpers import COMMODITIES, NATIONAL, TRADITIONAL
+
+    day0 = date(2024, 4, 10)
+    con = duckdb.connect()
+    create_dimensions(con, REF_DIR, COMMODITIES)
+    prices = [(day0 + timedelta(days=t), NATIONAL, "com_1", TRADITIONAL, 100, False)
+              for t in range(-60, -45)]
+    # weeks -3 and -2 tie at +10%; float noise below 1e-6 must not break the tie
+    for t, price in [(-21, 110), (-14, 110.0000001), (-7, 100)]:
+        prices.append((day0 + timedelta(days=t), NATIONAL, "com_1", TRADITIONAL, price, False))
+    con.executemany("INSERT INTO fact_price_daily VALUES (?, ?, ?, ?, ?, ?)", prices)
+    con.execute(read_sql("views.sql"))
+    build_marts(con)
+    (peak_week,) = rows(con, "SELECT peak_week FROM mart_q1_summary")[0]
+    assert peak_week == -3

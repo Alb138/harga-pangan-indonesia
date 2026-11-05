@@ -44,7 +44,8 @@ yearly_peak AS (
     GROUP BY ALL
 ),
 typical AS (
-    SELECT commodity_id, week, median(week_index) AS price_index
+    -- rounded so that float noise from parallel averaging cannot reorder near-equal weeks
+    SELECT commodity_id, week, ROUND(median(week_index), 6) AS price_index
     FROM (
         SELECT commodity_id, lebaran_year, week, AVG(price_index) AS week_index
         FROM season
@@ -55,7 +56,7 @@ typical AS (
 timing AS (
     SELECT
         commodity_id,
-        arg_max(week, price_index) AS peak_week,
+        first(week ORDER BY price_index DESC, week) AS peak_week,  -- ties: earliest week
         MIN(week) FILTER (WHERE price_index >= 1.05) AS start_rise_week
     FROM typical
     GROUP BY ALL
