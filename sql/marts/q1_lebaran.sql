@@ -27,40 +27,58 @@ JOIN baseline AS b USING (commodity_id, lebaran_year)
 ORDER BY ALL;
 
 
+-- Summary per commodity.
+--   median_peak_pct : median over years of each season's highest index (size of the rise)
+--   *_week          : timing read from ONE "typical season" curve - the median across years
+--                     of each week's average index - so peak, start and recovery always
+--                     tell a consistent story. Week -1 = H-7..H-1, week 0 = H..H+6.
 CREATE OR REPLACE TABLE mart_q1_summary AS
-WITH after_baseline AS (
-    SELECT * FROM mart_q1_lebaran_index WHERE t >= -45
+WITH season AS (
+    SELECT *, CAST(floor(t / 7) AS INTEGER) AS week
+    FROM mart_q1_lebaran_index
+    WHERE t >= -42   -- whole weeks after the baseline window
 ),
-per_year AS (
-    -- Peak of each Lebaran season and the first day the index crossed +5%.
+yearly_peak AS (
+    SELECT commodity_id, lebaran_year, MAX(price_index) - 1 AS peak_pct
+    FROM season
+    GROUP BY ALL
+),
+typical AS (
+    SELECT commodity_id, week, median(week_index) AS price_index
+    FROM (
+        SELECT commodity_id, lebaran_year, week, AVG(price_index) AS week_index
+        FROM season
+        GROUP BY ALL
+    )
+    GROUP BY ALL
+),
+timing AS (
     SELECT
         commodity_id,
-        lebaran_year,
-        MAX(price_index) - 1 AS peak_pct,
-        arg_max(t, price_index) AS peak_t,
-        MIN(t) FILTER (WHERE price_index >= 1.05) AS start_rise_t
-    FROM after_baseline
+        arg_max(week, price_index) AS peak_week,
+        MIN(week) FILTER (WHERE price_index >= 1.05) AS start_rise_week
+    FROM typical
     GROUP BY ALL
 ),
 recovery AS (
-    -- First day after the peak when the index is back within +5% of baseline.
-    SELECT y.commodity_id, y.lebaran_year, MIN(a.t) AS recover_t
-    FROM per_year AS y
-    JOIN after_baseline AS a
-      ON a.commodity_id = y.commodity_id
-     AND a.lebaran_year = y.lebaran_year
-     AND a.t > y.peak_t
-     AND a.price_index < 1.05
+    -- First week after the peak when the typical index is back within +5% of baseline.
+    SELECT t.commodity_id, MIN(c.week) AS recover_week
+    FROM timing AS t
+    JOIN typical AS c
+      ON c.commodity_id = t.commodity_id
+     AND c.week > t.peak_week
+     AND c.price_index < 1.05
     GROUP BY ALL
 )
 SELECT
     y.commodity_id,
-    median(y.peak_pct)     AS median_peak_pct,
-    median(y.peak_t)       AS median_peak_t,
-    median(y.start_rise_t) AS median_start_rise_t,
-    median(r.recover_t)    AS median_recover_t,
-    COUNT(*)               AS n_years
-FROM per_year AS y
-LEFT JOIN recovery AS r USING (commodity_id, lebaran_year)
+    median(y.peak_pct)  AS median_peak_pct,
+    ANY_VALUE(t.peak_week)       AS peak_week,
+    ANY_VALUE(t.start_rise_week) AS start_rise_week,
+    ANY_VALUE(r.recover_week)    AS recover_week,
+    COUNT(*)            AS n_years
+FROM yearly_peak AS y
+JOIN timing AS t USING (commodity_id)
+LEFT JOIN recovery AS r USING (commodity_id)
 GROUP BY y.commodity_id
 ORDER BY median_peak_pct DESC;

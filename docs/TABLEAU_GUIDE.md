@@ -94,8 +94,9 @@ dua KPI di kiri atas, "Tren Harga" di bawahnya. Tambahkan *Text* kecil di bawah:
 1. Sumber `lebaran_summary.csv`. `median_peak_pct` → **Columns** (Average), `commodity_name`
    → **Rows**, urutkan descending.
 2. Warna satu saja: biru `#2a78d6`. Format angka: persen 0 desimal.
-3. Seret `median_peak_t` ke **Tooltip** dan ubah teks tooltip:
-   `Puncak rata-rata di H<median_peak_t>, mulai naik di H<median_start_rise_t>`.
+3. Seret `peak_week`, `start_rise_week`, dan `recover_week` ke **Tooltip** dan ubah teksnya:
+   `Mulai naik minggu ke <start_rise_week>, puncak minggu ke <peak_week>, normal lagi minggu
+   ke <recover_week> (minggu -1 = 7 hari terakhir sebelum Lebaran)`.
 
 Susun: bar di kiri, garis di kanan; filter `commodity_name` dipakai untuk garis.
 

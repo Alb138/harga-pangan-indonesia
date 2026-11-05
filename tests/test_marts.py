@@ -1,6 +1,6 @@
 """The five analysis marts, checked against hand-computed numbers on a synthetic warehouse."""
 
-from datetime import date
+from datetime import date, timedelta
 
 import pytest
 
@@ -36,12 +36,47 @@ def test_q1_baseline_and_peak(con):
     (summary,) = rows(
         con,
         """
-        SELECT median_peak_pct, median_peak_t, median_start_rise_t, median_recover_t, n_years
+        SELECT median_peak_pct, peak_week, start_rise_week, recover_week, n_years
         FROM mart_q1_summary WHERE commodity_id = 'com_1'
         """,
     )
     assert summary[0] == pytest.approx(0.20)
-    assert summary[1:] == (-7, -10, 12, 1)
+    # weeks relative to Lebaran: -1 = H-7..H-1, 0 = H..H+6
+    # t=-10 (+6%) -> week -2, t=-7 (+20%) -> week -1, t=12 (+3%) -> week 1
+    assert summary[1:] == (-1, -2, 1, 1)
+
+
+def test_q1_timing_read_from_typical_season():
+    """Timing comes from one curve (weekly median across years), so it is always coherent."""
+    import duckdb
+
+    from pangan.config import REF_DIR
+    from pangan.warehouse import create_dimensions, read_sql
+    from tests.helpers import COMMODITIES, NATIONAL, TRADITIONAL
+
+    lebaran = {2023: date(2023, 4, 22), 2024: date(2024, 4, 10), 2025: date(2025, 3, 31)}
+    # index in week -2, -1, 0 for each year; baseline = 100
+    seasons = {2023: (140, 100, 100), 2024: (100, 130, 100), 2025: (110, 120, 100)}
+    con = duckdb.connect()
+    create_dimensions(con, REF_DIR, COMMODITIES)
+    prices = []
+    for year, day0 in lebaran.items():
+        for t in range(-60, -45):
+            prices.append((day0 + timedelta(days=t), NATIONAL, "com_1", TRADITIONAL, 100, False))
+        for t, price in zip((-14, -7, 0), seasons[year], strict=True):
+            prices.append((day0 + timedelta(days=t), NATIONAL, "com_1", TRADITIONAL, price, False))
+    con.executemany("INSERT INTO fact_price_daily VALUES (?, ?, ?, ?, ?, ?)", prices)
+    con.execute(read_sql("views.sql"))
+    build_marts(con)
+
+    (summary,) = rows(
+        con,
+        "SELECT median_peak_pct, peak_week, start_rise_week, recover_week, n_years "
+        "FROM mart_q1_summary",
+    )
+    # yearly peaks 40%, 30%, 20% -> median 30%; typical curve: wk-2 1.10, wk-1 1.20, wk0 1.00
+    assert summary[0] == pytest.approx(0.30)
+    assert summary[1:] == (-1, -2, 0, 3)
 
 
 def test_q2_four_week_jump(con):
