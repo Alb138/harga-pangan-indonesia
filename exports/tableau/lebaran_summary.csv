@@ -1,0 +1,22 @@
+commodity_name,category_name,median_peak_pct,peak_week,start_rise_week,recover_week,n_years
+Cabai Rawit Merah,Cabai Rawit,0.1772,-5,-5,-4,9
+Cabai Merah Besar,Cabai Merah,0.1418,-4,-6,-3,9
+Daging Ayam Ras Segar,Daging Ayam,0.1281,0,-1,3,9
+Cabai Merah Keriting,Cabai Merah,0.128,0,0,1,9
+Cabai Rawit Hijau,Cabai Rawit,0.128,-4,,-3,9
+Bawang Merah Ukuran Sedang,Bawang Merah,0.1045,3,1,,9
+Telur Ayam Ras Segar,Telur Ayam,0.0815,-1,-1,1,9
+Bawang Putih Ukuran Sedang,Bawang Putih,0.0605,-1,-1,0,9
+Daging Sapi Kualitas 1,Daging Sapi,0.0537,-1,,0,9
+Daging Sapi Kualitas 2,Daging Sapi,0.0487,-1,,0,9
+Minyak Goreng Curah,Minyak Goreng,0.0371,4,,,9
+Gula Pasir Lokal,Gula Pasir,0.0225,2,,3,9
+Gula Pasir Kualitas Premium,Gula Pasir,0.0195,3,,4,9
+Minyak Goreng Kemasan Bermerk 1,Minyak Goreng,0.0151,-1,,0,9
+Minyak Goreng Kemasan Bermerk 2,Minyak Goreng,0.0145,4,,,9
+Beras Kualitas Super II,Beras,0.0145,-1,,0,9
+Beras Kualitas Super I,Beras,0.0058,4,,,9
+Beras Kualitas Medium II,Beras,0.0049,-4,,-3,9
+Beras Kualitas Bawah II,Beras,0.0048,-6,,-5,9
+Beras Kualitas Medium I,Beras,0.0027,-3,,-2,9
+Beras Kualitas Bawah I,Beras,0.0018,-4,,-3,9
