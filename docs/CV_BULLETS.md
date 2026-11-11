@@ -4,7 +4,7 @@ Pick 2–3. Every number is traceable to `docs/PENJELASAN.md` § 3.
 
 ## English
 
-**Indonesian Food Price Analysis (2018–2026)** — Python, SQL (DuckDB), Tableau · *github link*
+**Indonesian Food Price Analysis (2018–2026)** — Python, SQL (DuckDB), Tableau · [github.com/Alb138/harga-pangan-indonesia](https://github.com/Alb138/harga-pangan-indonesia)
 
 - Built an end-to-end pipeline that collects **1.7M daily prices** for 21 staple foods across
   34 provinces from Bank Indonesia's PIHPS, models them in a DuckDB star schema and answers four
@@ -18,7 +18,7 @@ Pick 2–3. Every number is traceable to `docs/PENJELASAN.md` § 3.
 
 ## Bahasa Indonesia
 
-**Analisis Harga Pangan Indonesia (2018–2026)** — Python, SQL (DuckDB), Tableau · *link github*
+**Analisis Harga Pangan Indonesia (2018–2026)** — Python, SQL (DuckDB), Tableau · [github.com/Alb138/harga-pangan-indonesia](https://github.com/Alb138/harga-pangan-indonesia)
 
 - Membangun pipeline end-to-end yang mengumpulkan **1,7 juta harga harian** 21 komoditas pangan
   di 34 provinsi dari PIHPS Bank Indonesia, memodelkannya dalam star schema DuckDB, dan menjawab
